@@ -8,7 +8,12 @@ function App() {
   // const sasToken = "sv=....&sig=...."; // your real SAS token
   const containerUrl = process.env.REACT_APP_CONTAINER_URL;
   const sasToken = process.env.REACT_APP_SAS_TOKEN;
-
+  console.log("Container URL:", containerUrl);
+  console.log("SAS Token:", sasToken);
+  console.log(
+    "Full request URL:",
+    `${containerUrl}?restype=container&comp=list&${sasToken}`
+  );
   useEffect(() => {
     async function fetchReports() {
       try {

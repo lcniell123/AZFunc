@@ -1,0 +1,10 @@
+{
+  "name": "fetchanalyticsfn",
+  "version": "1.0.0",
+  "description": "Azure Functions for GSC fetching and querying",
+  "main": "index.js",
+  "dependencies": {
+    "@azure/storage-blob": "^12.15.0",
+    "node-fetch": "^2.6.7"
+  }
+}
