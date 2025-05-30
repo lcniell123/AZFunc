@@ -3,10 +3,10 @@ const { google } = require("googleapis");
 const { BlobServiceClient } = require("@azure/storage-blob");
 const path = require("path");
 
-const credentialsPath = path.join(__dirname, "../../credentials.json");
+const credentialsPath = path.join(__dirname, "../credentials.json");
 const containerName = "gsc-data";
 
-module.exports = async function (myTimer, context) {
+module.exports = async function (context, myTimer) {
   context.log("🚀 BiweeklyAnalyticsPull started at", new Date().toISOString());
 
   try {
@@ -39,8 +39,8 @@ module.exports = async function (myTimer, context) {
       process.env.AZURE_STORAGE_CONNECTION_STRING
     );
     const containerClient = blobServiceClient.getContainerClient(containerName);
-
-    const blobName = `report-${startDate}.json`;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-") + `-${Date.now()}`;
+    const blobName = `report-${timestamp}.json`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     await blockBlobClient.upload(
       JSON.stringify(response.data.rows),
