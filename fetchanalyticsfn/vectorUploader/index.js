@@ -2,6 +2,15 @@ const { BlobServiceClient } = require('@azure/storage-blob');
 const { v4: uuidv4 } = require('uuid');
 const { QdrantClient } = require('@qdrant/js-client-rest');
 
+
+module.exports = async function (context, req) {
+  context.log("✅ vectorUploader is working");
+  context.res = {
+    status: 200,
+    body: "Hello from vectorUploader!"
+  };
+};
+
 module.exports = async function (context, req) {
   const qdrantUrl = process.env.QDRANT_URL;
   const qdrantApiKey = process.env.QDRANT_API_KEY;

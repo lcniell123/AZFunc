@@ -1,119 +1,72 @@
-### Azure Function Project – GA4/GSC Summarization and Question Answering (RAG System)
+# 📡 vectorUploader Azure Function
 
-# Description:
-This Azure Function App (Node.js) implements a Retrieval-Augmented Generation (RAG) system that allows users to ask questions or generate summaries from large GA4 or Google Search Console (GSC) datasets. The data is stored in Azure Blob Storage, chunked and embedded, indexed in Qdrant Cloud, and queried using Hugging Face LLMs.
+This Azure Function ingests Google Search Console (GSC) data stored in Azure Blob Storage, converts it to text descriptions, embeds the text using a local model via `@xenova/transformers`, and uploads the resulting vectors to a Qdrant Cloud collection (`seo-analytics`) for use in a Retrieval-Augmented Generation (RAG) pipeline.
 
-# Components:
+## ✅ What It Does
 
-chatbotSummary
+1. Downloads `reportTest.json` from the `gsc-data` container in your Azure Blob Storage.
+2. Parses GSC rows into readable text (e.g., “URL X had Y clicks, Z CTR, etc.”).
+3. Embeds text using `Xenova/all-MiniLM-L6-v2` with mean pooling + normalization.
+4. Batches and uploads the vectors to a Qdrant collection (`seo-analytics`).
+5. Skips invalid rows and logs meaningful progress or errors.
 
-Accepts a user query via HTTP POST
+## 📁 Folder Structure
 
-Loads JSON data (GA4 or GSC) from local file or Azure Blob
+```
+fetchanalyticsfn/
+├── host.json
+├── local.settings.json
+└── vectorUploader/
+    ├── index.js
+    └── function.json
+```
 
-Chunks and filters key performance entries
+## 🔧 Setup
 
-Formats a summarization or question prompt
+### 1. Install dependencies
 
-Sends the prompt to Hugging Face API (e.g., distilbart-cnn-12-6, mistral)
+```bash
+npm install @xenova/transformers @qdrant/js-client-rest
+```
 
-Returns a summary or answer
+### 2. Configure local settings
 
-biweeklyAnalyticsPull
+Create or update `local.settings.json`:
 
-Timer-triggered Azure Function
-
-Pulls GSC data using Google Search Console API
-
-Generates reports for a specific time window
-
-Uploads JSON reports to Azure Blob Storage
-
-Automatically names and stores data by timestamp
-
-# Technologies Used:
-
-Azure Functions (Node.js)
-
-Azure Blob Storage
-
-Hugging Face Inference API (MiniLM, DistilBART, Mistral)
-
-Qdrant Cloud (Vector database for chunk retrieval)
-
-Google Search Console API
-
-Environment Variables:
-
-AZURE_STORAGE_CONNECTION_STRING
-
-HUGGING_FACE_API_KEY
-
-QDRANT_API_KEY
-
-QDRANT_URL
-
-Example local.settings.json:
-
+```json
 {
-"IsEncrypted": false,
-"Values": {
-"AzureWebJobsStorage": "<your-azure-blob-conn-string>",
-"HUGGING_FACE_API_KEY": "<your-hf-token>",
-"QDRANT_API_KEY": "<your-qdrant-key>",
-"QDRANT_URL": "https://your-qdrant-instance-url"
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "<your-storage-connection-string>",
+    "QDRANT_URL": "<your-qdrant-url>",
+    "QDRANT_API_KEY": "<your-qdrant-api-key>",
+    "FUNCTIONS_WORKER_RUNTIME": "node"
+  }
 }
-}
+```
 
-# Installation:
+## 🚀 Running Locally
 
-Clone the repository
+Start the function app:
 
-Run npm install
+```bash
+func start
+```
 
-Add your local.settings.json
+Then visit:
 
-Run locally with func start
+```
+http://localhost:7071/api/vectorUploader
+```
 
-How to Use:
-Send a POST request to the function endpoint with a JSON body:
+Watch the logs for:
 
-# Example:
-{
-"question": "Which pages had the highest CTR last month?"
-}
+- ✅ Embedding progress
+- ✅ Upload confirmation
+- ❌ Error details (with full trace)
 
-The function will:
+## 🧠 Next Steps
 
-Embed the question
-
-Query Qdrant for relevant data chunks
-
-Build a prompt
-
-Send the prompt to Hugging Face
-
-Return the LLM-generated answer
-
-Data Flow:
-
-Data pulled (biweeklyAnalyticsPull)
-
-Stored in Azure Blob
-
-Loaded by chatbotSummary
-
-Chunked and embedded into Qdrant
-
-Query processed via semantic search + LLM
-
-Next Steps:
-
-Automate embedding new blobs into Qdrant
-
-Add support for user-uploaded files
-
-Extend to support layout generation or dashboards
-
-Create a React or static front-end to call the function
-
+- ✅ Build a `searchGSC.js` function to query Qdrant for top matches to a user prompt
+- ✅ Add summarization using Hugging Face’s `distilbart-cnn` or OpenAI
+- ✅ Set up scheduled ingestion (e.g., every 3 days)
