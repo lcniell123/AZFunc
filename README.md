@@ -1,4 +1,4 @@
-# vectorUploader Azure Function
+# AZ Function to Vector Database
 
 This Azure Function ingests Google Search Console (GSC) data stored in Azure Blob Storage, converts it to text descriptions, embeds the text using a local model via `@xenova/transformers`, and uploads the resulting vectors to a Qdrant Cloud collection (`seo-analytics`) for use in a Retrieval-Augmented Generation (RAG) pipeline.
 
