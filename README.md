@@ -1,8 +1,8 @@
-# 📡 vectorUploader Azure Function
+# vectorUploader Azure Function
 
 This Azure Function ingests Google Search Console (GSC) data stored in Azure Blob Storage, converts it to text descriptions, embeds the text using a local model via `@xenova/transformers`, and uploads the resulting vectors to a Qdrant Cloud collection (`seo-analytics`) for use in a Retrieval-Augmented Generation (RAG) pipeline.
 
-## ✅ What It Does
+## What It Does
 
 1. Downloads `reportTest.json` from the `gsc-data` container in your Azure Blob Storage.
 2. Parses GSC rows into readable text (e.g., “URL X had Y clicks, Z CTR, etc.”).
@@ -10,7 +10,7 @@ This Azure Function ingests Google Search Console (GSC) data stored in Azure Blo
 4. Batches and uploads the vectors to a Qdrant collection (`seo-analytics`).
 5. Skips invalid rows and logs meaningful progress or errors.
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 fetchanalyticsfn/
@@ -21,7 +21,7 @@ fetchanalyticsfn/
     └── function.json
 ```
 
-## 🔧 Setup
+## Setup
 
 ### 1. Install dependencies
 
@@ -45,7 +45,7 @@ Create or update `local.settings.json`:
 }
 ```
 
-## 🚀 Running Locally
+## Running Locally
 
 Start the function app:
 
